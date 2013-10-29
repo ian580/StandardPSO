@@ -10,7 +10,7 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 1;
+            const int functionNumber = 4;
             int numberOfDimensions;
             double maxX;
             double minX;
@@ -23,15 +23,15 @@ namespace StandardPSO
                     optimumFitness = 0;
                     break;
                 case 2:
-                    numberOfDimensions = 10;
+                    numberOfDimensions = 30;
                     maxX = 2.048;
                     minX = -2.048;
                     optimumFitness = 0;
                     break;
                 case 3:
-                    numberOfDimensions = 10;
-                    maxX = 30;
-                    minX = -30;
+                    numberOfDimensions = 30;
+                    maxX = 32;
+                    minX = -32;
                     optimumFitness = 0;
                     break;
                 case 4:
@@ -107,7 +107,7 @@ namespace StandardPSO
                         particle.Position.CopyTo(bestGlobalPosition, 0);
                         Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
                     }
-
+                    //TODO stopping targets for each function
                     if (bestGlobalFitness < (optimumFitness + optimumFitness * 0.01) && bestGlobalFitness > (optimumFitness - optimumFitness * 0.01))
                     {
                         Console.WriteLine("Current global best within 1% of optimum");

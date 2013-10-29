@@ -146,7 +146,7 @@ namespace StandardPSO
             Fitness = 0; // f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)
             double sum1 = 0;
             double sum2 = 0;
-            for (int i = 0; i < dimension - 1; i++)
+            for (int i = 0; i < dimension; i++)
             {
                 sum1 += Position[i] * Position[i];
                 sum2 += Math.Cos(2 * Math.PI * Position[i]);
@@ -164,7 +164,7 @@ namespace StandardPSO
         {
             Fitness = 0; // f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))
             double sum = 0;
-            double prod = 0;
+            double prod = 1;
             for (int i = 0; i < dimension; i++)
             {
                 sum += Position[i] * Position[i];
