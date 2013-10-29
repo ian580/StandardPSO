@@ -82,7 +82,7 @@ namespace StandardPSO
                 {
                     double hi = Math.Abs(maxX - minX);
                     double lo = -1.0 * Math.Abs(maxX - minX);
-                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + minX;
+                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
                 }
                 //create and initialse particle
                 swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);

@@ -13,14 +13,11 @@ namespace StandardPSO
         public double Fitness { get; private set; }
         private double bestFitness;
         private double[] bestPosition;
-        private Particle[] neighbourhood;
         private double boundary;
         private const double C1 = 2.05;
         private const double C2 = 2.05;
         private double w;
         private double X;
-        //TODO Set VMax based on region max values of x for each function
-        //this might be the cause of poor performance at high dimensions, maybe due to swarm explosion...
         private double VMAX;
         private Random random;
         private int dimension;
@@ -45,17 +42,12 @@ namespace StandardPSO
             getFitness();
         }
 
-        //TODO fitness update and velocity update shoul be seperate steps
-        public void update(double[] globalbest)
+        public void update(double[] globalBest)
         {
             bool calcFitness = true;
             for (int i = 0; i < dimension; i++)
             {
-<<<<<<< HEAD
-                double newVelocity = X *( velocity[i] + C1 * random.NextDouble() * (bestPosition[i] - Position[i]) + C2 * random.NextDouble() * (globalbest[i] - Position[i]));
-=======
-                double newVelocity = X * (velocity[i] + C1 * random.NextDouble() * (bestPosition[i] - Position[i]) + C2 * random.NextDouble() * (globalbest[i] - Position[i]));
->>>>>>> 890ffa328a578ab368c07258ebe9e36033e14604
+                double newVelocity = X *( velocity[i] + C1 * random.NextDouble() * (bestPosition[i] - Position[i]) + C2 * random.NextDouble() * (globalBest[i] - Position[i]));
                 if (newVelocity > VMAX)
                     velocity[i] = VMAX;
                 else if (newVelocity < -1 * VMAX)
@@ -70,7 +62,6 @@ namespace StandardPSO
             if (calcFitness)
                 getFitness();
         }
-
 
         private void getFitness()
         {

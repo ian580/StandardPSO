@@ -10,7 +10,7 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 6;
+            const int functionNumber = 1;
             int numberOfDimensions;
             double maxX;
             double minX;
@@ -80,7 +80,7 @@ namespace StandardPSO
                 {
                     double hi = Math.Abs(maxX - minX);
                     double lo = -1.0 * Math.Abs(maxX - minX);
-                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + minX;
+                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
                 }
                 //create and initialse particle
                 swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
