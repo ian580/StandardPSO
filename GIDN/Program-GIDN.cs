@@ -10,8 +10,10 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 1;
+            const int functionNumber = 5;
             int numberOfDimensions;
+            int b = 2;//initial number of neighbours
+            int y = 2;//rate of population increase
             double maxX;
             double minX;
             switch (functionNumber)
@@ -59,10 +61,10 @@ namespace StandardPSO
                     optimumFitness = 0;
                     break;
             }
-            
+
             int numberOfParticles = 50;
-            int numberOfIterations = 10000;
-            
+            int numberOfIterations = 100000;
+
             double[] bestGlobalPosition = new double[numberOfDimensions];
             double bestGlobalFitness = Double.MaxValue;
             Random rand = new Random();
@@ -91,18 +93,20 @@ namespace StandardPSO
                 }
                 //create and initialse particle
                 swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
+                swarm[j].NeighbourhoodNumber = 0;
                 //check if new particle has the best position/fitness
                 if (swarm[j].Fitness < bestGlobalFitness)
                 {
                     bestGlobalFitness = swarm[j].Fitness;
                     swarm[j].Position.CopyTo(bestGlobalPosition, 0);
                 }
-                
+
             }
 
             //create neighbourhoods
             for (int i = 0; i < swarm.Length; i++)
             {
+                swarm[i].setNotNeighbours(swarm);
                 //first particle
                 if (i == 0)
                 {
@@ -132,6 +136,26 @@ namespace StandardPSO
             for (int iteration = 0; iteration < numberOfIterations; iteration++)
             {
                 bool stop = false;
+                
+                //update neighbourhoods
+                foreach (Particle particle in swarm)
+                {
+                    double prevH = particle.NeighbourhoodNumber;
+                    double H = (((iteration + 1) / numberOfIterations) * ((iteration + 1) / numberOfIterations)) * numberOfParticles + b;
+                    particle.NeighbourhoodNumber = H;
+                    if (H > prevH)
+                    {
+                        int numberOfNeighbours = (int)(H - prevH);
+                        for (int i = 0; i < numberOfNeighbours; i++)
+                        {
+                            if (particle.notNeighbours.Count == 0)
+                                break;
+                            particle.addNeighbour(particle.notNeighbours[0]);
+                        }
+                    }
+                }
+                
+                //update particles state
                 foreach (Particle particle in swarm)
                 {
                     particle.update();
@@ -142,13 +166,7 @@ namespace StandardPSO
                         Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
                     }
 
-                    //if (bestGlobalFitness < (optimumFitness + optimumFitness * 0.01) && bestGlobalFitness > (optimumFitness - optimumFitness * 0.01))
-                    //{
-                    //    Console.WriteLine("Current global best within 1% of optimum");
-                    //    Console.WriteLine("Stopping at iteration: {0}", iteration);
-                    //    stop = true;
-                    //    break;
-                    //}
+                    
                 }
                 if (stop)
                     break;

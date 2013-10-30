@@ -10,42 +10,48 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 4;
+            const int functionNumber = 6;
             int numberOfDimensions;
             double maxX;
             double minX;
             switch (functionNumber)
             {
+                //sphere
                 case 1:
                     numberOfDimensions = 30;
                     maxX = 5.12;
                     minX = -5.12;
                     optimumFitness = 0;
                     break;
+                //Rosenbrock
                 case 2:
                     numberOfDimensions = 30;
                     maxX = 2.048;
                     minX = -2.048;
                     optimumFitness = 0;
                     break;
+                //Ackley
                 case 3:
                     numberOfDimensions = 30;
                     maxX = 32;
                     minX = -32;
                     optimumFitness = 0;
                     break;
+                //Griewank
                 case 4:
-                    numberOfDimensions = 10;
+                    numberOfDimensions = 30;
                     maxX = 600;
                     minX = -600;
                     optimumFitness = 0;
                     break;
+                //Rastrigin
                 case 5:
-                    numberOfDimensions = 10;
+                    numberOfDimensions = 30;
                     maxX = 5.12;
                     minX = -5.12;
                     optimumFitness = 0;
                     break;
+                //Schaffers
                 case 6:
                     numberOfDimensions = 2;
                     maxX = 100;
@@ -107,14 +113,13 @@ namespace StandardPSO
                         particle.Position.CopyTo(bestGlobalPosition, 0);
                         Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
                     }
-                    //TODO stopping targets for each function
-                    if (bestGlobalFitness < (optimumFitness + optimumFitness * 0.01) && bestGlobalFitness > (optimumFitness - optimumFitness * 0.01))
-                    {
-                        Console.WriteLine("Current global best within 1% of optimum");
-                        Console.WriteLine("Stopping at iteration: {0}", iteration);
-                        stop = true;
-                        break;
-                    }
+                    //if (Math.Abs(bestGlobalFitness) < goalFitness)
+                    //{
+                    //    Console.WriteLine("Goal achieved");
+                    //    Console.WriteLine("Stopping at iteration: {0}", iteration);
+                    //    stop = true;
+                    //    break;
+                    //}
                 }
                 if (stop)
                     break;
