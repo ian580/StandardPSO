@@ -10,7 +10,7 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 5;
+            const int functionNumber = 1;
             int numberOfDimensions;
             int b = 2;//initial number of neighbours
             int y = 2;//rate of population increase
@@ -63,7 +63,7 @@ namespace StandardPSO
             }
 
             int numberOfParticles = 50;
-            int numberOfIterations = 100000;
+            int numberOfIterations = 10000;
 
             double[] bestGlobalPosition = new double[numberOfDimensions];
             double bestGlobalFitness = Double.MaxValue;

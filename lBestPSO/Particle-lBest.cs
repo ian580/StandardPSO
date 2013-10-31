@@ -21,7 +21,8 @@ namespace StandardPSO
         private double w;
         private double X;
         private double VMAX;
-        private Random random;
+        private Random r1;
+        private Random r2;
         private int dimension;
 
         public Particle(double[] initialPosition, double[] initialVelocity, int dims, double maxX, int number)
@@ -43,7 +44,8 @@ namespace StandardPSO
             bestFitness = Double.MaxValue;
             initialVelocity.CopyTo(velocity, 0);
             dimension = dims;
-            random = new Random();
+            r1 = new Random();
+            r2 = new Random();
             getFitness();
         }
 
@@ -53,7 +55,7 @@ namespace StandardPSO
             bool calcFitness = true;
             for (int i = 0; i < dimension; i++)
             {
-                double newVelocity = X * (velocity[i] + C1 * random.NextDouble() * (bestPosition[i] - Position[i]) + C2 * random.NextDouble() * (nBestPos[i] - Position[i]));
+                double newVelocity = X * (velocity[i] + C1 * r1.NextDouble() * (bestPosition[i] - Position[i]) + C2 * r2.NextDouble() * (nBestPos[i] - Position[i]));
                 if (newVelocity > VMAX)
                     velocity[i] = VMAX;
                 else if (newVelocity < -1 * VMAX)

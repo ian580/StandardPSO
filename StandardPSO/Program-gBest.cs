@@ -10,7 +10,7 @@ namespace StandardPSO
         static void Main(string[] args)
         {
             double optimumFitness;
-            const int functionNumber = 6;
+            const int functionNumber = 1;
             int numberOfDimensions;
             double maxX;
             double minX;
