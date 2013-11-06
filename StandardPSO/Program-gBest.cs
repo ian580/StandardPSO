@@ -9,6 +9,7 @@ namespace StandardPSO
     {
         static void Main(string[] args)
         {
+            int numberOfRuns = 10;
             double optimumFitness;
             const int functionNumber = 1;
             int numberOfDimensions;
@@ -60,72 +61,76 @@ namespace StandardPSO
                     break;
             }
 
-            int numberOfParticles = 50;
-            int numberOfIterations = 10000;
-            double[] bestGlobalPosition = new double[numberOfDimensions];
-            double bestGlobalFitness = Double.MaxValue;
-            Random rand = new Random();
-            Particle[] swarm = new Particle[numberOfParticles];
-
-            outputStartInfo(numberOfParticles, numberOfIterations, maxX, minX, functionNumber);
-
-            Console.WriteLine("Beginning Initialisation");
-            //initialise swarm
-            for (int j = 0; j < swarm.Length; j++)
-            {   
-                //get random initial position
-                double[] initialPos = new double[numberOfDimensions];
-                for (int i = 0; i < numberOfDimensions; i++)
-                {
-                    initialPos[i] = (maxX - minX) * rand.NextDouble() + minX;
-                }
-
-                //get random initial velocity
-                double[] initialVelocity = new double[numberOfDimensions];
-                for (int i = 0; i < numberOfDimensions; i++)
-                {
-                    double hi = Math.Abs(maxX - minX);
-                    double lo = -1.0 * Math.Abs(maxX - minX);
-                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
-                }
-                //create and initialse particle
-                swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
-                //check if new particle has the best position/fitness
-                if (swarm[j].Fitness < bestGlobalFitness)
-                {
-                    bestGlobalFitness = swarm[j].Fitness;
-                    swarm[j].Position.CopyTo(bestGlobalPosition, 0);
-                }
-            }
-            Console.WriteLine("Initialisation Complete");
-
-            Console.WriteLine("Beginning Main Loop");
-            //main loop
-            for (int iteration = 0; iteration < numberOfIterations; iteration++)
+            for (int run = 0; run < numberOfRuns; run++)
             {
-                bool stop = false;
-                foreach (Particle particle in swarm)
+                Console.WriteLine("Beggining run {0}", run + 1);
+                int numberOfParticles = 50;
+                int numberOfIterations = 10000;
+                double[] bestGlobalPosition = new double[numberOfDimensions];
+                double bestGlobalFitness = Double.MaxValue;
+                Random rand = new Random();
+                Particle[] swarm = new Particle[numberOfParticles];
+
+                outputStartInfo(numberOfParticles, numberOfIterations, maxX, minX, functionNumber);
+
+                Console.WriteLine("Beginning Initialisation");
+                //initialise swarm
+                for (int j = 0; j < swarm.Length; j++)
                 {
-                    particle.update(bestGlobalPosition);
-                    if (particle.Fitness < bestGlobalFitness)
+                    //get random initial position
+                    double[] initialPos = new double[numberOfDimensions];
+                    for (int i = 0; i < numberOfDimensions; i++)
                     {
-                        bestGlobalFitness = particle.Fitness;
-                        particle.Position.CopyTo(bestGlobalPosition, 0);
-                        Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
+                        initialPos[i] = (maxX - minX) * rand.NextDouble() + minX;
                     }
-                    //if (Math.Abs(bestGlobalFitness) < goalFitness)
-                    //{
-                    //    Console.WriteLine("Goal achieved");
-                    //    Console.WriteLine("Stopping at iteration: {0}", iteration);
-                    //    stop = true;
-                    //    break;
-                    //}
+
+                    //get random initial velocity
+                    double[] initialVelocity = new double[numberOfDimensions];
+                    for (int i = 0; i < numberOfDimensions; i++)
+                    {
+                        double hi = Math.Abs(maxX - minX);
+                        double lo = -1.0 * Math.Abs(maxX - minX);
+                        initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
+                    }
+                    //create and initialse particle
+                    swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
+                    //check if new particle has the best position/fitness
+                    if (swarm[j].Fitness < bestGlobalFitness)
+                    {
+                        bestGlobalFitness = swarm[j].Fitness;
+                        swarm[j].Position.CopyTo(bestGlobalPosition, 0);
+                    }
                 }
-                if (stop)
-                    break;
+                Console.WriteLine("Initialisation Complete");
+
+                Console.WriteLine("Beginning Main Loop");
+                //main loop
+                for (int iteration = 0; iteration < numberOfIterations; iteration++)
+                {
+                    bool stop = false;
+                    foreach (Particle particle in swarm)
+                    {
+                        particle.update(bestGlobalPosition);
+                        if (particle.Fitness < bestGlobalFitness)
+                        {
+                            bestGlobalFitness = particle.Fitness;
+                            particle.Position.CopyTo(bestGlobalPosition, 0);
+                            Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
+                        }
+                        //if (Math.Abs(bestGlobalFitness) < goalFitness)
+                        //{
+                        //    Console.WriteLine("Goal achieved");
+                        //    Console.WriteLine("Stopping at iteration: {0}", iteration);
+                        //    stop = true;
+                        //    break;
+                        //}
+                    }
+                    if (stop)
+                        break;
+                }
+                Console.WriteLine("End of main loop");
+                outputSummary(bestGlobalPosition, bestGlobalFitness);
             }
-            Console.WriteLine("End of main loop");
-            outputSummary(bestGlobalPosition, bestGlobalFitness);
         }
 
         public static void outputStartInfo(int noParticles, int noIterations, double max, double min, int funcNumber)

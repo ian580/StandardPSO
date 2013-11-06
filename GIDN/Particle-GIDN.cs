@@ -71,6 +71,8 @@ namespace StandardPSO
             }
             if (calcFitness)
                 getFitness();
+            else
+                Console.WriteLine("Particle out of bounds");
         }
 
         private void getFitness()
@@ -116,7 +118,7 @@ namespace StandardPSO
             {
                 if (p.Fitness < nBestFitness)
                 {
-                    nBestPos = p.Position;
+                    p.Position.CopyTo(nBestPos, 0);
                     nBestFitness = p.Fitness;
                 }
             }
