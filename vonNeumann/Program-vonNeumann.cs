@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Diagnostics;
 
 namespace StandardPSO
 {
     class Program
     {
+        static StreamWriter writer;
         static void Main(string[] args)
         {
+            string dir = "F:\\MSc\\Graphs";
+            string date = DateTime.Now.ToString();
+            date = date.Replace('/', '-');
+            date = date.Replace(":", "");
+            string fileName = dir + "\\gBest " + date + ".dat";
+            writer = new StreamWriter(fileName);
+            
             int numberOfRuns = 10;
             double optimumFitness;
             const int functionNumber = 1;
@@ -205,42 +215,60 @@ namespace StandardPSO
                     }
                     if (stop)
                         break;
+                    writer.WriteLine(iteration + "\t" + bestGlobalFitness);
                 }
                 Console.WriteLine("End of main loop");
                 outputSummary(bestGlobalPosition, bestGlobalFitness);
+                writer.Close();
+                gnuPlot(fileName, date);
             }
         }
 
         public static void outputStartInfo(int noParticles, int noIterations, double max, double min, int funcNumber)
         {
-            Console.WriteLine("Beginning vonNeumann PSO");
+            Console.WriteLine("Beginning gBest PSO");
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Number of particles: {0}", noParticles);
             Console.WriteLine("Maximum number of iterations: {0}", noIterations);
             Console.WriteLine("Function Number: {0}", funcNumber);
+            writer.WriteLine("# Beginning gBest PSO");
+            writer.WriteLine("# --------------------------------------");
+            writer.WriteLine("# Number of particles: {0}", noParticles);
+            writer.WriteLine("# Maximum number of iterations: {0}", noIterations);
+            writer.WriteLine("# Function Number: {0}", funcNumber);
+
             switch (funcNumber)
             {
                 case 1:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (xi^2)");
+                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2)");
                     break;
                 case 2:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (100(xi+1 - xi^2)^2 + (xi - 1)^2)");
+                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (100(xi+1 - xi^2)^2 + (xi - 1)^2)");
                     break;
                 case 3:
                     Console.WriteLine("Problem being optimised: f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)");
+                    writer.WriteLine("# Problem being optimised: f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)");
                     break;
                 case 4:
                     Console.WriteLine("Problem being optimised: f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))");
+                    writer.WriteLine("# Problem being optimised: f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))");
                     break;
                 case 5:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (xi^2 - 10cos(2*pi*xi) + 10)");
+                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2 - 10cos(2*pi*xi) + 10)");
                     break;
                 case 6:
                     Console.WriteLine("Problem being optimised: f(x) = 0.5 - ((sin(sqrt(x1^2+x2^2)))^2 - 0.5))/(1 + 0.001(x1^2+x2^2))^2");
+                    writer.WriteLine("# Problem being optimised: f(x) = 0.5 - ((sin(sqrt(x1^2+x2^2)))^2 - 0.5))/(1 + 0.001(x1^2+x2^2))^2");
                     break;
             }
             Console.WriteLine("Range of values: {0} < x < {1}", min, max);
             Console.WriteLine("--------------------------------------\n\n");
+            writer.WriteLine("# Range of values: {0} < x < {1}", min, max);
+            writer.WriteLine("# --------------------------------------\n\n");
+            writer.WriteLine("# Iteration\tFitness");
         }
 
         public static void outputSummary(double[] bestPos, double bestFitness)
@@ -248,16 +276,48 @@ namespace StandardPSO
             Console.WriteLine("Summary");
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Best particle position: ");
+            writer.WriteLine("# Summary");
+            writer.WriteLine("# --------------------------------------");
+            writer.WriteLine("# Best particle position: ");
+            writer.Write("# ");
             foreach (Double pos in bestPos)
             {
                 Console.Write(pos + " ");
+                writer.Write(pos + " ");
             }
             Console.WriteLine("\nBest fitness: {0}", bestFitness);
             Console.WriteLine("--------------------------------------\n\n");
-            Console.ReadLine();
+            writer.WriteLine("\n# Best fitness: {0}", bestFitness);
+            writer.WriteLine("# --------------------------------------\n\n");
+
+            //Console.ReadLine();
 
         }
 
+        public static void gnuPlot(string datFile, string date)
+        {
+            string pngFile = "gBest " + date + ".png";
+            string pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            Process extPro = new Process();
+            extPro.StartInfo.FileName = pgm;
+            extPro.StartInfo.UseShellExecute = false;
+            extPro.StartInfo.RedirectStandardInput = true;
+            extPro.Start();
 
+            StreamWriter gnupStWr = extPro.StandardInput;
+            gnupStWr.WriteLine("reset");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set autoscale");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set term png");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set output \"" + pngFile + "\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set xlabel \"Iteration\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set ylabel \"Fitness\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("plot '" + datFile + "' with lines");
+        }
     }
 }

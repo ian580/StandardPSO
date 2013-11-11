@@ -6,7 +6,7 @@
  set xlabel "Iteration"
  set ylabel "Fitness"
  set term png
- set output "test.png"
- plot "F:\MSc\Graphs\gBest 07-11-2013 171907.dat" with line
+ set output "F:\MSc\Graphs\test.png"
+ plot "F:\MSc\Graphs\gBest 08-11-2013 132815.dat" with line
  
  

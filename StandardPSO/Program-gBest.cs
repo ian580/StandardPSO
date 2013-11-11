@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 namespace StandardPSO
 {
@@ -140,7 +141,7 @@ namespace StandardPSO
                 Console.WriteLine("End of main loop");
                 outputSummary(bestGlobalPosition, bestGlobalFitness);
                 writer.Close();
-                generateGraph(fileName);
+                gnuPlot(fileName, date);
             }
         }
 
@@ -210,16 +211,34 @@ namespace StandardPSO
             writer.WriteLine("\n# Best fitness: {0}", bestFitness);
             writer.WriteLine("# --------------------------------------\n\n");
             
-            Console.ReadLine();
+            //Console.ReadLine();
 
         }
 
-        public static void generateGraph(string datFile)
+        public static void gnuPlot(string datFile, string date)
         {
-            //TODO fix automatic calling of gnuplot at end of run
-            //string cmd = "gnuplot -e \"filename='" + datFile + "'\" \"F:\\Visual Studio 2010\\Projects\\StandardPSO\\StandardPSO\\gnuCmds.plg\"";
-            //string cmd = "gnuplot 'F:\\Visual Studio 2010\\Projects\\StandardPSO\\StandardPSO\\gnuCmds.plg'";
-            System.Diagnostics.Process.Start("gnuplot \"F:\\Visual Studio 2010\\Projects\\StandardPSO\\StandardPSO\\gnuCmds.plg\"");
+            string pngFile = "gBest "+ date + ".png";
+            string pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            Process extPro = new Process();
+            extPro.StartInfo.FileName = pgm;
+            extPro.StartInfo.UseShellExecute = false;
+            extPro.StartInfo.RedirectStandardInput = true;
+            extPro.Start();
+
+            StreamWriter gnupStWr = extPro.StandardInput;
+            gnupStWr.WriteLine("reset");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set autoscale");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set term png");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set output \"" + pngFile + "\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set xlabel \"Iteration\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("set ylabel \"Fitness\"");
+            gnupStWr.Flush();
+            gnupStWr.WriteLine("plot '"+datFile+"' with lines");
         }
 
         
