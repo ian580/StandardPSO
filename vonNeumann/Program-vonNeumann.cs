@@ -9,19 +9,20 @@ namespace StandardPSO
 {
     class Program
     {
-        static StreamWriter writer;
+        //static StreamWriter writer;
         static void Main(string[] args)
         {
-            string dir = "F:\\MSc\\Graphs";
+            int numberOfParticles = 49;
+            int numberOfIterations = 10000;
+            double[] averageValues = new double[numberOfIterations];
+            string dir = @"C:\Users\Ian\Documents\College Laptop\MSc\Graphs";
             string date = DateTime.Now.ToString();
             date = date.Replace('/', '-');
             date = date.Replace(":", "");
             string fileName = dir + "\\gBest " + date + ".dat";
-            writer = new StreamWriter(fileName);
-            
-            int numberOfRuns = 10;
+            int numberOfRuns = 25;
             double optimumFitness;
-            const int functionNumber = 1;
+            const int functionNumber = 6;
             int numberOfDimensions;
             double maxX;
             double minX;
@@ -74,11 +75,9 @@ namespace StandardPSO
             for (int run = 0; run < numberOfRuns; run++)
             {
                 Console.WriteLine("Beggining run {0}", run + 1);
-                int numberOfParticles = 49;
+                
                 int squareSize = (int) Math.Sqrt(numberOfParticles);
                 bool includeSelf = true;
-                int numberOfIterations = 10000;
-
                 double[] bestGlobalPosition = new double[numberOfDimensions];
                 double bestGlobalFitness = Double.MaxValue;
                 Random rand = new Random();
@@ -215,13 +214,15 @@ namespace StandardPSO
                     }
                     if (stop)
                         break;
-                    writer.WriteLine(iteration + "\t" + bestGlobalFitness);
+                    //writer.WriteLine(iteration + "\t" + bestGlobalFitness);
+                    averageValues[iteration] += bestGlobalFitness;
                 }
                 Console.WriteLine("End of main loop");
                 outputSummary(bestGlobalPosition, bestGlobalFitness);
-                writer.Close();
-                gnuPlot(fileName, date);
+                //writer.Close();
+                //gnuPlot(fileName, date);
             }
+            createAverageSummary(averageValues, date, numberOfRuns);
         }
 
         public static void outputStartInfo(int noParticles, int noIterations, double max, double min, int funcNumber)
@@ -231,44 +232,44 @@ namespace StandardPSO
             Console.WriteLine("Number of particles: {0}", noParticles);
             Console.WriteLine("Maximum number of iterations: {0}", noIterations);
             Console.WriteLine("Function Number: {0}", funcNumber);
-            writer.WriteLine("# Beginning gBest PSO");
-            writer.WriteLine("# --------------------------------------");
-            writer.WriteLine("# Number of particles: {0}", noParticles);
-            writer.WriteLine("# Maximum number of iterations: {0}", noIterations);
-            writer.WriteLine("# Function Number: {0}", funcNumber);
+            //writer.WriteLine("# Beginning gBest PSO");
+            //writer.WriteLine("# --------------------------------------");
+            //writer.WriteLine("# Number of particles: {0}", noParticles);
+            //writer.WriteLine("# Maximum number of iterations: {0}", noIterations);
+            //writer.WriteLine("# Function Number: {0}", funcNumber);
 
             switch (funcNumber)
             {
                 case 1:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (xi^2)");
-                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2)");
+                    //writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2)");
                     break;
                 case 2:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (100(xi+1 - xi^2)^2 + (xi - 1)^2)");
-                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (100(xi+1 - xi^2)^2 + (xi - 1)^2)");
+                    //writer.WriteLine("# Problem being optimised: f(x) = ∑ (100(xi+1 - xi^2)^2 + (xi - 1)^2)");
                     break;
                 case 3:
                     Console.WriteLine("Problem being optimised: f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)");
-                    writer.WriteLine("# Problem being optimised: f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)");
+                    //writer.WriteLine("# Problem being optimised: f(x) = -20*exp(-0.2*sqrt(1/n * ∑(xi^2)) - exp(1/n*∑(cos(2*pi*xi)) + 20 + exp(1)");
                     break;
                 case 4:
                     Console.WriteLine("Problem being optimised: f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))");
-                    writer.WriteLine("# Problem being optimised: f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))");
+                    //writer.WriteLine("# Problem being optimised: f(x) = 1 + (1/4000) * ∑(xi^2) - N(cos(xi/pi))");
                     break;
                 case 5:
                     Console.WriteLine("Problem being optimised: f(x) = ∑ (xi^2 - 10cos(2*pi*xi) + 10)");
-                    writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2 - 10cos(2*pi*xi) + 10)");
+                    //writer.WriteLine("# Problem being optimised: f(x) = ∑ (xi^2 - 10cos(2*pi*xi) + 10)");
                     break;
                 case 6:
                     Console.WriteLine("Problem being optimised: f(x) = 0.5 - ((sin(sqrt(x1^2+x2^2)))^2 - 0.5))/(1 + 0.001(x1^2+x2^2))^2");
-                    writer.WriteLine("# Problem being optimised: f(x) = 0.5 - ((sin(sqrt(x1^2+x2^2)))^2 - 0.5))/(1 + 0.001(x1^2+x2^2))^2");
+                    //writer.WriteLine("# Problem being optimised: f(x) = 0.5 - ((sin(sqrt(x1^2+x2^2)))^2 - 0.5))/(1 + 0.001(x1^2+x2^2))^2");
                     break;
             }
             Console.WriteLine("Range of values: {0} < x < {1}", min, max);
             Console.WriteLine("--------------------------------------\n\n");
-            writer.WriteLine("# Range of values: {0} < x < {1}", min, max);
-            writer.WriteLine("# --------------------------------------\n\n");
-            writer.WriteLine("# Iteration\tFitness");
+            //writer.WriteLine("# Range of values: {0} < x < {1}", min, max);
+            //writer.WriteLine("# --------------------------------------\n\n");
+            //writer.WriteLine("# Iteration\tFitness");
         }
 
         public static void outputSummary(double[] bestPos, double bestFitness)
@@ -276,19 +277,19 @@ namespace StandardPSO
             Console.WriteLine("Summary");
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Best particle position: ");
-            writer.WriteLine("# Summary");
-            writer.WriteLine("# --------------------------------------");
-            writer.WriteLine("# Best particle position: ");
-            writer.Write("# ");
-            foreach (Double pos in bestPos)
-            {
-                Console.Write(pos + " ");
-                writer.Write(pos + " ");
-            }
+            //writer.WriteLine("# Summary");
+            //writer.WriteLine("# --------------------------------------");
+            //writer.WriteLine("# Best particle position: ");
+            //writer.Write("# ");
+            //foreach (Double pos in bestPos)
+            //{
+            //    Console.Write(pos + " ");
+            //    writer.Write(pos + " ");
+            //}
             Console.WriteLine("\nBest fitness: {0}", bestFitness);
             Console.WriteLine("--------------------------------------\n\n");
-            writer.WriteLine("\n# Best fitness: {0}", bestFitness);
-            writer.WriteLine("# --------------------------------------\n\n");
+            //writer.WriteLine("\n# Best fitness: {0}", bestFitness);
+            //writer.WriteLine("# --------------------------------------\n\n");
 
             //Console.ReadLine();
 
@@ -296,8 +297,9 @@ namespace StandardPSO
 
         public static void gnuPlot(string datFile, string date)
         {
-            string pngFile = "gBest " + date + ".png";
-            string pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            string pngFile = "vonNeumann " + date + ".png";
+            //string pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            string pgm = @"C:\Program Files\gnuplot\bin\gnuplot.exe";
             Process extPro = new Process();
             extPro.StartInfo.FileName = pgm;
             extPro.StartInfo.UseShellExecute = false;
@@ -318,6 +320,20 @@ namespace StandardPSO
             gnupStWr.WriteLine("set ylabel \"Fitness\"");
             gnupStWr.Flush();
             gnupStWr.WriteLine("plot '" + datFile + "' with lines");
+        }
+
+        public static void createAverageSummary(double[] values, string date, int noRuns)
+        {
+            string dir = @"C:\Users\Ian\Documents\College Laptop\MSc\Graphs";
+            string fileName = dir + "\\vonNeumann " + date + ".dat";
+            StreamWriter file = new StreamWriter(fileName);
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = values[i] / noRuns;
+                file.WriteLine(i + "\t" + values[i]);
+            }
+            file.Close();
+            gnuPlot(fileName, date);
         }
     }
 }
