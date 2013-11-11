@@ -71,8 +71,6 @@ namespace StandardPSO
             }
             if (calcFitness)
                 getFitness();
-            else
-                Console.WriteLine("Particle out of bounds");
         }
 
         private void getFitness()
