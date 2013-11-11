@@ -58,6 +58,7 @@ namespace StandardPSO
                     velocity[i] = newVelocity;
 
                 Position[i] = Position[i] + velocity[i];
+                //TODO investigate number of particles out of bounds
                 if (Math.Abs(Position[i]) > boundary)
                     calcFitness = false;
             }
