@@ -107,7 +107,7 @@ namespace StandardPSO
             {
                 if (p.Fitness < nBestFitness)
                 {
-                    nBestPos = p.Position;
+                    p.Position.CopyTo(nBestPos, 0);
                     nBestFitness = p.Fitness;
                 }
             }

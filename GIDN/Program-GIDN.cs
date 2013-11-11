@@ -9,6 +9,7 @@ namespace StandardPSO
     {
         static void Main(string[] args)
         {
+            int numberOfRuns = 10;
             double optimumFitness;
             const int functionNumber = 1;
             int numberOfDimensions;
@@ -62,122 +63,127 @@ namespace StandardPSO
                     break;
             }
 
-            int numberOfParticles = 50;
-            int numberOfIterations = 10000;
-
-            double[] bestGlobalPosition = new double[numberOfDimensions];
-            double bestGlobalFitness = Double.MaxValue;
-            Random rand = new Random();
-            Particle[] swarm = new Particle[numberOfParticles];
-
-            outputStartInfo(numberOfParticles, numberOfIterations, maxX, minX, functionNumber);
-
-            Console.WriteLine("Beginning Initialisation");
-            //initialise swarm
-            for (int j = 0; j < swarm.Length; j++)
+            for (int run = 0; run < numberOfRuns; run++)
             {
-                //get random initial position
-                double[] initialPos = new double[numberOfDimensions];
-                for (int i = 0; i < numberOfDimensions; i++)
-                {
-                    initialPos[i] = (maxX - minX) * rand.NextDouble() + minX;
-                }
+                Console.WriteLine("Beggining run {0}", run + 1);
+                int numberOfParticles = 50;
+                int numberOfIterations = 10000;
 
-                //get random initial velocity
-                double[] initialVelocity = new double[numberOfDimensions];
-                for (int i = 0; i < numberOfDimensions; i++)
-                {
-                    double hi = Math.Abs(maxX - minX);
-                    double lo = -1.0 * Math.Abs(maxX - minX);
-                    initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
-                }
-                //create and initialse particle
-                swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
-                swarm[j].NeighbourhoodNumber = 0;
-                //check if new particle has the best position/fitness
-                if (swarm[j].Fitness < bestGlobalFitness)
-                {
-                    bestGlobalFitness = swarm[j].Fitness;
-                    swarm[j].Position.CopyTo(bestGlobalPosition, 0);
-                }
+                double[] bestGlobalPosition = new double[numberOfDimensions];
+                double bestGlobalFitness = Double.MaxValue;
+                Random rand = new Random();
+                Particle[] swarm = new Particle[numberOfParticles];
 
-            }
+                outputStartInfo(numberOfParticles, numberOfIterations, maxX, minX, functionNumber);
 
-            //create neighbourhoods
-            for (int i = 0; i < swarm.Length; i++)
-            {
-                swarm[i].setNotNeighbours(swarm);
-                //first particle
-                if (i == 0)
+                Console.WriteLine("Beginning Initialisation");
+                //initialise swarm
+                for (int j = 0; j < swarm.Length; j++)
                 {
-                    swarm[i].addNeighbour(swarm[i]);
-                    swarm[i].addNeighbour(swarm[i + 1]);
-                    swarm[i].addNeighbour(swarm[swarm.Length - 1]);
-                }
-                //last particle
-                else if (i == (swarm.Length - 1))
-                {
-                    swarm[i].addNeighbour(swarm[i]);
-                    swarm[i].addNeighbour(swarm[0]);
-                    swarm[i].addNeighbour(swarm[i - 1]);
-                }
-                //other particles
-                else
-                {
-                    swarm[i].addNeighbour(swarm[i]);
-                    swarm[i].addNeighbour(swarm[i + 1]);
-                    swarm[i].addNeighbour(swarm[i - 1]);
-                }
-            }
-            Console.WriteLine("Initialisation Complete");
-
-            Console.WriteLine("Beginning Main Loop");
-            //main loop
-            for (int iteration = 0; iteration < numberOfIterations; iteration++)
-            {
-                bool stop = false;
-                
-                //update neighbourhoods
-                foreach (Particle particle in swarm)
-                {
-                    double prevH = particle.NeighbourhoodNumber;
-                    double H = (((iteration + 1) / numberOfIterations) * ((iteration + 1) / numberOfIterations)) * numberOfParticles + b;
-                    particle.NeighbourhoodNumber = H;
-                    if (H > prevH)
+                    //get random initial position
+                    double[] initialPos = new double[numberOfDimensions];
+                    for (int i = 0; i < numberOfDimensions; i++)
                     {
-                        int numberOfNeighbours = (int)(H - prevH);
-                        for (int i = 0; i < numberOfNeighbours; i++)
+                        initialPos[i] = (maxX - minX) * rand.NextDouble() + minX;
+                    }
+
+                    //get random initial velocity
+                    double[] initialVelocity = new double[numberOfDimensions];
+                    for (int i = 0; i < numberOfDimensions; i++)
+                    {
+                        double hi = Math.Abs(maxX - minX);
+                        double lo = -1.0 * Math.Abs(maxX - minX);
+                        initialVelocity[i] = (hi - lo) * rand.NextDouble() + lo;
+                    }
+                    //create and initialse particle
+                    swarm[j] = new Particle(initialPos, initialVelocity, numberOfDimensions, maxX, functionNumber);
+                    //set each particle's neighbourhood number to zero
+                    swarm[j].NeighbourhoodNumber = 0;
+                    //check if new particle has the best position/fitness
+                    if (swarm[j].Fitness < bestGlobalFitness)
+                    {
+                        bestGlobalFitness = swarm[j].Fitness;
+                        swarm[j].Position.CopyTo(bestGlobalPosition, 0);
+                    }
+                }
+
+                //create neighbourhoods
+                for (int i = 0; i < swarm.Length; i++)
+                {
+                    swarm[i].setNotNeighbours(swarm);
+                    //first particle
+                    if (i == 0)
+                    {
+                        swarm[i].addNeighbour(swarm[i]);
+                        swarm[i].addNeighbour(swarm[i + 1]);
+                        swarm[i].addNeighbour(swarm[swarm.Length - 1]);
+                    }
+                    //last particle
+                    else if (i == (swarm.Length - 1))
+                    {
+                        swarm[i].addNeighbour(swarm[i]);
+                        swarm[i].addNeighbour(swarm[0]);
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                    }
+                    //other particles
+                    else
+                    {
+                        swarm[i].addNeighbour(swarm[i]);
+                        swarm[i].addNeighbour(swarm[i + 1]);
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                    }
+                }
+                Console.WriteLine("Initialisation Complete");
+
+                Console.WriteLine("Beginning Main Loop");
+                //main loop
+                for (int iteration = 0; iteration < numberOfIterations; iteration++)
+                {
+                    bool stop = false;
+
+                    //update neighbourhoods
+                    foreach (Particle particle in swarm)
+                    {
+                        double prevH = particle.NeighbourhoodNumber;
+                        double H = (((iteration + 1.0) / numberOfIterations) * ((iteration + 1.0) / numberOfIterations)) * numberOfParticles + b;
+                        H = Math.Floor(H);
+                        particle.NeighbourhoodNumber = H;
+                        if (H > prevH)
                         {
-                            if (particle.notNeighbours.Count == 0)
-                                break;
-                            particle.addNeighbour(particle.notNeighbours[0]);
+                            int numberOfNeighbours = (int)(H - prevH);
+                            for (int i = 0; i < numberOfNeighbours; i++)
+                            {
+                                if (particle.notNeighbours.Count == 0)
+                                    break;
+                                //add new random neighbour
+                                int neighbour = (int) (rand.NextDouble() * particle.notNeighbours.Count);
+                                particle.addNeighbour(particle.notNeighbours[neighbour]);
+                            }
                         }
                     }
-                }
-                
-                //update particles state
-                foreach (Particle particle in swarm)
-                {
-                    particle.update();
-                    if (particle.Fitness < bestGlobalFitness)
-                    {
-                        bestGlobalFitness = particle.Fitness;
-                        particle.Position.CopyTo(bestGlobalPosition, 0);
-                        Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
-                    }
 
-                    
+                    //update particles state
+                    foreach (Particle particle in swarm)
+                    {
+                        particle.update();
+                        if (particle.Fitness < bestGlobalFitness)
+                        {
+                            bestGlobalFitness = particle.Fitness;
+                            particle.Position.CopyTo(bestGlobalPosition, 0);
+                            Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
+                        }
+                    }
+                    if (stop)
+                        break;
                 }
-                if (stop)
-                    break;
+                Console.WriteLine("End of main loop");
+                outputSummary(bestGlobalPosition, bestGlobalFitness);
             }
-            Console.WriteLine("End of main loop");
-            outputSummary(bestGlobalPosition, bestGlobalFitness);
         }
 
         public static void outputStartInfo(int noParticles, int noIterations, double max, double min, int funcNumber)
         {
-            Console.WriteLine("Beginning gBest PSO");
+            Console.WriteLine("Beginning GIDN PSO");
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Number of particles: {0}", noParticles);
             Console.WriteLine("Maximum number of iterations: {0}", noIterations);

@@ -14,7 +14,6 @@ namespace StandardPSO
         private double bestFitness;
         private double[] bestPosition;
         private List<Particle> neighbourhood;
-        public List<Particle> notNeighbours;
         private double[] nBestPos;
         private double boundary;
         private const double C1 = 2.05;
@@ -25,7 +24,6 @@ namespace StandardPSO
         private Random r1;
         private Random r2;
         private int dimension;
-        public double NeighbourhoodNumber { get; set; }
 
         public Particle(double[] initialPosition, double[] initialVelocity, int dims, double maxX, int number)
         {
@@ -51,7 +49,6 @@ namespace StandardPSO
             getFitness();
         }
 
-        
         public void update()
         {
             getNeighbourhoodBest();
@@ -71,8 +68,6 @@ namespace StandardPSO
             }
             if (calcFitness)
                 getFitness();
-            else
-                Console.WriteLine("Particle out of bounds");
         }
 
         private void getFitness()
@@ -103,12 +98,6 @@ namespace StandardPSO
         public void addNeighbour(Particle neighbour)
         {
             neighbourhood.Add(neighbour);
-            notNeighbours.Remove(neighbour);
-        }
-
-        public void setNotNeighbours(Particle[] swarm)
-        {
-            notNeighbours = swarm.ToList();
         }
 
         private void getNeighbourhoodBest()

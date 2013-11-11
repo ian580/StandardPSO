@@ -64,8 +64,11 @@ namespace StandardPSO
             for (int run = 0; run < numberOfRuns; run++)
             {
                 Console.WriteLine("Beggining run {0}", run + 1);
-                int numberOfParticles = 50;
+                int numberOfParticles = 49;
+                int squareSize = (int) Math.Sqrt(numberOfParticles);
+                bool includeSelf = true;
                 int numberOfIterations = 10000;
+
                 double[] bestGlobalPosition = new double[numberOfDimensions];
                 double bestGlobalFitness = Double.MaxValue;
                 Random rand = new Random();
@@ -100,6 +103,80 @@ namespace StandardPSO
                         bestGlobalFitness = swarm[j].Fitness;
                         swarm[j].Position.CopyTo(bestGlobalPosition, 0);
                     }
+
+                }
+
+                //create vonNeumann structure
+                for (int i = 0; i < swarm.Length; i++)
+                {
+                    if (includeSelf)
+                        swarm[i].addNeighbour(swarm[i]);
+                    //left edge of square
+                    if (i % squareSize == 0)
+                    {
+                        swarm[i].addNeighbour(swarm[i + 1]);
+                        swarm[i].addNeighbour(swarm[i + squareSize - 1]);
+                        //top corner
+                        if (i == 0)
+                        {
+                            swarm[i].addNeighbour(swarm[i + (squareSize * (squareSize - 1))]);
+                            swarm[i].addNeighbour(swarm[i + squareSize]);
+                        }
+                        //bottom corner
+                        else if(i == (squareSize * (squareSize - 1)))
+                        {
+                            swarm[i].addNeighbour(swarm[0]);
+                            swarm[i].addNeighbour(swarm[i - squareSize]);
+                        }
+                        //rest of edge
+                        else
+                        {
+                            swarm[i].addNeighbour(swarm[i - squareSize]);
+                            swarm[i].addNeighbour(swarm[i + squareSize]);
+                        }
+                    }
+                    //top edge
+                    else if(i < squareSize)
+                    {
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                        swarm[i].addNeighbour(swarm[i + squareSize]);
+                        swarm[i].addNeighbour(swarm[i + (squareSize * (squareSize - 1))]);
+                        if (i != squareSize - 1)
+                            swarm[i].addNeighbour(swarm[i + 1]);
+
+                        else
+                            swarm[i].addNeighbour(swarm[i - squareSize + 1]);
+                    }
+
+                    //right edge
+                    else if ((i + 1) % squareSize == 0)
+                    {
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                        swarm[i].addNeighbour(swarm[i - squareSize + 1]);
+                        swarm[i].addNeighbour(swarm[i - squareSize]);
+                        if (i < swarm.Length - 1)
+                            swarm[i].addNeighbour(swarm[i + squareSize]);
+                        else
+                            swarm[i].addNeighbour(swarm[i - (squareSize * (squareSize - 1))]);
+                    }
+
+                    //bottom edge
+                    else if (i > (squareSize * (squareSize - 1)))
+                    {
+                        swarm[i].addNeighbour(swarm[i + 1]);
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                        swarm[i].addNeighbour(swarm[i - squareSize]);
+                        swarm[i].addNeighbour(swarm[i - (squareSize * (squareSize - 1))]);
+                    }
+
+                    //particles in the middle of grid
+                    else
+                    {
+                        swarm[i].addNeighbour(swarm[i + 1]);
+                        swarm[i].addNeighbour(swarm[i - 1]);
+                        swarm[i].addNeighbour(swarm[i + squareSize]);
+                        swarm[i].addNeighbour(swarm[i - squareSize]);
+                    }
                 }
                 Console.WriteLine("Initialisation Complete");
 
@@ -110,16 +187,17 @@ namespace StandardPSO
                     bool stop = false;
                     foreach (Particle particle in swarm)
                     {
-                        particle.update(bestGlobalPosition);
+                        particle.update();
                         if (particle.Fitness < bestGlobalFitness)
                         {
                             bestGlobalFitness = particle.Fitness;
                             particle.Position.CopyTo(bestGlobalPosition, 0);
                             Console.WriteLine("Best Fitness: {0} Iteration: {1}", bestGlobalFitness, iteration);
                         }
-                        //if (Math.Abs(bestGlobalFitness) < goalFitness)
+
+                        //if (bestGlobalFitness < (optimumFitness + optimumFitness * 0.01) && bestGlobalFitness > (optimumFitness - optimumFitness * 0.01))
                         //{
-                        //    Console.WriteLine("Goal achieved");
+                        //    Console.WriteLine("Current global best within 1% of optimum");
                         //    Console.WriteLine("Stopping at iteration: {0}", iteration);
                         //    stop = true;
                         //    break;
@@ -135,7 +213,7 @@ namespace StandardPSO
 
         public static void outputStartInfo(int noParticles, int noIterations, double max, double min, int funcNumber)
         {
-            Console.WriteLine("Beginning gBest PSO");
+            Console.WriteLine("Beginning vonNeumann PSO");
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Number of particles: {0}", noParticles);
             Console.WriteLine("Maximum number of iterations: {0}", noIterations);
@@ -180,6 +258,6 @@ namespace StandardPSO
 
         }
 
-        
+
     }
 }
